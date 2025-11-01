@@ -123,16 +123,7 @@ Vous pouvez personnaliser ce module selon vos besoins :
 - **Modifier les vues** : Éditez le fichier `views/views.xml` pour changer l'apparence des formulaires et listes.
 - **Ajouter des actions** : Créez de nouvelles méthodes dans le modèle pour des actions personnalisées.
 
-## Support
-
-Pour toute question ou problème, veuillez consulter la documentation officielle d'Odoo ou contacter votre administrateur Odoo.
-
-## Licence
-
-Ce module est fourni tel quel. Adaptez-le selon vos besoins.
-
 ---
 
-**Version** : 1.0  
-**Auteur** : Votre Nom  
+**Auteur** : yosra el mimouni
 **Date de création** : 31 octobre 2025
