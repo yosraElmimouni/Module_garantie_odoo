@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Séquence pour les numéros de garantie -->
+        <record id="seq_garantie_number" model="ir.sequence">
+            <field name="name">Numéro de Garantie</field>
+            <field name="code">gestion.garantie</field>
+            <field name="prefix">GAR/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+            <field name="implementation">standard</field>
+        </record>
+    </data>
+</odoo>
