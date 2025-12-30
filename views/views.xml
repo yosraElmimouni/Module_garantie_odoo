@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Vue Arborescence -->
+        <record id="view_gestion_garantie_tree" model="ir.ui.view">
+            <field name="name">gestion.garantie.tree</field>
+            <field name="model">gestion.garantie</field>
+            <field name="arch" type="xml">
+                <list decoration-success="state=='valid'" 
+                      decoration-danger="state=='expired'" 
+                      decoration-warning="state=='claim'"
+                      decoration-muted="state=='draft'">
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="product_id"/>
+                    <field name="serial_number"/>
+                    <field name="purchase_date"/>
+                    <field name="expiration_date"/>
+                    <field name="state" widget="badge" 
+                           decoration-success="state=='valid'"
+                           decoration-danger="state=='expired'"
+                           decoration-warning="state=='claim'"
+                           decoration-info="state=='draft'"/>
+                </list>
+            </field>
+        </record>
+        
+        <!-- Vue Recherche -->
+        <record id="view_gestion_garantie_search" model="ir.ui.view">
+            <field name="name">gestion.garantie.search</field>
+            <field name="model">gestion.garantie</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="partner_id"/>
+                    <field name="product_id"/>
+                    <field name="serial_number"/>
+                    <separator/>
+                    <filter string="Brouillon" name="draft" 
+                            domain="[('state', '=', 'draft')]"/>
+                    <filter string="Valides" name="valid" 
+                            domain="[('state', '=', 'valid')]"/>
+                    <filter string="Expirées" name="expired" 
+                            domain="[('state', '=', 'expired')]"/>
+                    <filter string="Réclamations" name="claim" 
+                            domain="[('state', '=', 'claim')]"/>
+                    <group expand="0" string="Grouper par">
+                        <filter string="Client" name="group_partner" 
+                                context="{'group_by': 'partner_id'}"/>
+                        <filter string="Produit" name="group_product" 
+                                context="{'group_by': 'product_id'}"/>
+                        <filter string="Statut" name="group_state" 
+                                context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+        
+        <!-- Vue Formulaire -->
+        <record id="view_gestion_garantie_form" model="ir.ui.view">
+            <field name="name">gestion.garantie.form</field>
+            <field name="model">gestion.garantie</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_validate" string="Valider" type="object" 
+                                class="oe_highlight"
+                                invisible="state != 'draft'"/>
+                        
+                        <button name="action_create_claim" string="Créer Réclamation" 
+                                type="object" class="btn-warning"
+                                invisible="state not in ['valid', 'expired']"/>
+                        
+                        <button name="action_mark_expired" string="Marquer Expirée" 
+                                type="object" class="btn-danger"
+                                invisible="state != 'valid'"/>
+                        
+                        <button name="action_reset_to_draft" string="Réinitialiser" 
+                                type="object"
+                                invisible="state not in ['claim', 'expired']"/>
+                        
+                        <field name="state" widget="statusbar" 
+                               statusbar_visible="draft,valid,expired,claim"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Informations Client et Produit">
+                                <field name="partner_id"/>
+                                <field name="product_id"/>
+                            </group>
+                            <group string="Détails de la Garantie">
+                                <field name="serial_number"/>
+                                <field name="purchase_date"/>
+                                <field name="duration_months"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Dates Calculées">
+                                <field name="expiration_date" readonly="1"/>
+                            </group>
+                        </group>
+                        
+                        <!-- MODIFIÉ ICI : Afficher toujours le champ, mais en lecture seule si claim -->
+                        <notebook>
+                            <page string="Description du Problème">
+                                <group>
+                                    <field name="problem_description" 
+                                           nolabel="1" 
+                                           colspan="2"
+                                           placeholder="Décrivez le problème rencontré avec le produit..."
+                                           readonly="state == 'claim'"/>
+                                </group>
+                                <div class="alert alert-info" role="alert" 
+                                     invisible="state in ['claim']" 
+                                     style="margin: 10px;">
+                                    <i class="fa fa-info-circle"/> 
+                                    Remplissez la description du problème avant de créer une réclamation.
+                                </div>
+                                <div class="alert alert-success" role="alert" 
+                                     invisible="state != 'claim'" 
+                                     style="margin: 10px;">
+                                    <i class="fa fa-check-circle"/> 
+                                    Réclamation créée. La description est maintenant en lecture seule.
+                                </div>
+                            </page>
+                            
+                            <page string="Informations Système">
+                                <group>
+                                    <field name="create_date" readonly="1"/>
+                                    <field name="write_date" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        
+        <!-- Action -->
+        <record id="action_gestion_garantie" model="ir.actions.act_window">
+            <field name="name">Gestion des Garanties</field>
+            <field name="res_model">gestion.garantie</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_valid': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Créez votre première garantie !
+                </p>
+                <p>
+                    Utilisez ce module pour gérer les garanties de vos produits.
+                </p>
+            </field>
+        </record>
+        
+        <!-- Menu Principal -->
+        <menuitem id="menu_gestion_garantie_root" 
+                  name="Garanties" 
+                  sequence="10" 
+                  action="action_gestion_garantie" 
+                  web_icon="gestion_garantie_odoo,static/description/icon.png"/>
+        
+    </data>
+</odoo>
