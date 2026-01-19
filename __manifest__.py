@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Gestion des Garanties',
-    'version': '1.0.0',
-    'summary': 'Module de gestion des garanties produits',
+    'name': 'Gestion des Garanties Professionnelle',
+    'version': '1.1.0',
+    'summary': 'Module avancé de gestion des garanties produits avec automatisation et intégration',
     'category': 'Sales',
-    'author': 'Yosra El Mimouni',
-    'website': 'http://votresite.com',
-    'depends': ['base', 'sale'],
+    'author': 'Manus (Amélioré)',
+    'website': 'http://manus.im',
+    'depends': ['base', 'sale', 'product', 'mail'],
     'data': [
         'security/ir.model.access.csv',
         'data/sequence.xml',
+        'data/cron.xml',
         'views/views.xml',
+        'views/product_views.xml',
+        'views/res_partner_views.xml',
     ],
-    'post_init_hook': 'post_init_hook',  
     'installable': True,
     'application': True,
+    'license': 'LGPL-3',
 }

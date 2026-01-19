@@ -36,22 +36,16 @@
                     <field name="partner_id"/>
                     <field name="product_id"/>
                     <field name="serial_number"/>
+                    <field name="sale_order_id"/>
                     <separator/>
-                    <filter string="Brouillon" name="draft" 
-                            domain="[('state', '=', 'draft')]"/>
-                    <filter string="Valides" name="valid" 
-                            domain="[('state', '=', 'valid')]"/>
-                    <filter string="Expirées" name="expired" 
-                            domain="[('state', '=', 'expired')]"/>
-                    <filter string="Réclamations" name="claim" 
-                            domain="[('state', '=', 'claim')]"/>
+                    <filter string="Brouillon" name="draft" domain="[('state', '=', 'draft')]"/>
+                    <filter string="Valides" name="valid" domain="[('state', '=', 'valid')]"/>
+                    <filter string="Expirées" name="expired" domain="[('state', '=', 'expired')]"/>
+                    <filter string="Réclamations" name="claim" domain="[('state', '=', 'claim')]"/>
                     <group expand="0" string="Grouper par">
-                        <filter string="Client" name="group_partner" 
-                                context="{'group_by': 'partner_id'}"/>
-                        <filter string="Produit" name="group_product" 
-                                context="{'group_by': 'product_id'}"/>
-                        <filter string="Statut" name="group_state" 
-                                context="{'group_by': 'state'}"/>
+                        <filter string="Client" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                        <filter string="Produit" name="group_product" context="{'group_by': 'product_id'}"/>
+                        <filter string="Statut" name="group_state" context="{'group_by': 'state'}"/>
                     </group>
                 </search>
             </field>
@@ -65,23 +59,18 @@
                 <form>
                     <header>
                         <button name="action_validate" string="Valider" type="object" 
-                                class="oe_highlight"
-                                invisible="state != 'draft'"/>
+                                class="oe_highlight" invisible="state != 'draft'"/>
                         
                         <button name="action_create_claim" string="Créer Réclamation" 
-                                type="object" class="btn-warning"
-                                invisible="state not in ['valid', 'expired']"/>
+                                type="object" class="btn-warning" invisible="state not in ['valid', 'expired']"/>
                         
                         <button name="action_mark_expired" string="Marquer Expirée" 
-                                type="object" class="btn-danger"
-                                invisible="state != 'valid'"/>
+                                type="object" class="btn-danger" invisible="state != 'valid'"/>
                         
                         <button name="action_reset_to_draft" string="Réinitialiser" 
-                                type="object"
-                                invisible="state not in ['claim', 'expired']"/>
+                                type="object" invisible="state not in ['claim', 'expired']"/>
                         
-                        <field name="state" widget="statusbar" 
-                               statusbar_visible="draft,valid,expired,claim"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,valid,expired,claim"/>
                     </header>
                     <sheet>
                         <div class="oe_title">
@@ -91,53 +80,32 @@
                         </div>
                         <group>
                             <group string="Informations Client et Produit">
-                                <field name="partner_id"/>
-                                <field name="product_id"/>
+                                <field name="partner_id" readonly="state != 'draft'"/>
+                                <field name="product_id" readonly="state != 'draft'"/>
+                                <field name="sale_order_id" readonly="state != 'draft'"/>
                             </group>
                             <group string="Détails de la Garantie">
-                                <field name="serial_number"/>
-                                <field name="purchase_date"/>
-                                <field name="duration_months"/>
+                                <field name="serial_number" readonly="state != 'draft'"/>
+                                <field name="purchase_date" readonly="state != 'draft'"/>
+                                <field name="duration_months" readonly="state != 'draft'"/>
+                                <field name="expiration_date"/>
                             </group>
                         </group>
-                        <group>
-                            <group string="Dates Calculées">
-                                <field name="expiration_date" readonly="1"/>
-                            </group>
-                        </group>
-                        
-                        <!-- MODIFIÉ ICI : Afficher toujours le champ, mais en lecture seule si claim -->
                         <notebook>
                             <page string="Description du Problème">
                                 <group>
-                                    <field name="problem_description" 
-                                           nolabel="1" 
-                                           colspan="2"
+                                    <field name="problem_description" nolabel="1" colspan="2"
                                            placeholder="Décrivez le problème rencontré avec le produit..."
                                            readonly="state == 'claim'"/>
-                                </group>
-                                <div class="alert alert-info" role="alert" 
-                                     invisible="state in ['claim']" 
-                                     style="margin: 10px;">
-                                    <i class="fa fa-info-circle"/> 
-                                    Remplissez la description du problème avant de créer une réclamation.
-                                </div>
-                                <div class="alert alert-success" role="alert" 
-                                     invisible="state != 'claim'" 
-                                     style="margin: 10px;">
-                                    <i class="fa fa-check-circle"/> 
-                                    Réclamation créée. La description est maintenant en lecture seule.
-                                </div>
-                            </page>
-                            
-                            <page string="Informations Système">
-                                <group>
-                                    <field name="create_date" readonly="1"/>
-                                    <field name="write_date" readonly="1"/>
                                 </group>
                             </page>
                         </notebook>
                     </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
                 </form>
             </field>
         </record>
@@ -148,14 +116,6 @@
             <field name="res_model">gestion.garantie</field>
             <field name="view_mode">list,form</field>
             <field name="context">{'search_default_valid': 1}</field>
-            <field name="help" type="html">
-                <p class="o_view_nocontent_smiling_face">
-                    Créez votre première garantie !
-                </p>
-                <p>
-                    Utilisez ce module pour gérer les garanties de vos produits.
-                </p>
-            </field>
         </record>
         
         <!-- Menu Principal -->
